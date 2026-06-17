@@ -1,10 +1,19 @@
 services:
   webhook:
     build: .
-    ports:
-      - "8000:8000"
     env_file:
       - .env
     volumes:
       - ./credentials:/app/credentials:ro
     restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.drive-save.rule=Host(`images-tonadita.plataformabit.com`)"
+      - "traefik.http.routers.drive-save.entrypoints=web"
+      - "traefik.http.services.drive-save.loadbalancer.server.port=8000"
+
+networks:
+  proxy:
+    external: true

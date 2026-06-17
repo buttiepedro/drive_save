@@ -2,19 +2,23 @@ import io
 import logging
 import os
 
-from google.oauth2 import service_account
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
 
 logger = logging.getLogger(__name__)
 
-_SCOPES = ["https://www.googleapis.com/auth/drive"]
-
 
 def _get_service():
-    import json
-    info = json.loads(os.environ["GOOGLE_CREDENTIALS_JSON"])
-    creds = service_account.Credentials.from_service_account_info(info, scopes=_SCOPES)
+    creds = Credentials(
+        token=None,
+        refresh_token=os.environ["GOOGLE_REFRESH_TOKEN"],
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=os.environ["GOOGLE_CLIENT_ID"],
+        client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
+    )
+    creds.refresh(Request())
     return build("drive", "v3", credentials=creds)
 
 

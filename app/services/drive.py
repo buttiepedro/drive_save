@@ -1,9 +1,12 @@
 import io
+import logging
 import os
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
+
+logger = logging.getLogger(__name__)
 
 _SCOPES = ["https://www.googleapis.com/auth/drive"]
 
@@ -28,6 +31,7 @@ def find_or_create_folder(parent_id: str, name: str) -> str:
     result = service.files().list(q=query, fields="files(id)").execute()
     files = result.get("files", [])
     if files:
+        logger.debug("Carpeta existente | nombre=%s | id=%s", name, files[0]["id"])
         return files[0]["id"]
 
     metadata = {
@@ -36,6 +40,7 @@ def find_or_create_folder(parent_id: str, name: str) -> str:
         "parents": [parent_id],
     }
     folder = service.files().create(body=metadata, fields="id").execute()
+    logger.info("Carpeta creada en Drive | nombre=%s | id=%s", name, folder["id"])
     return folder["id"]
 
 

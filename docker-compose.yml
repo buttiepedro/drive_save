@@ -10,7 +10,7 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.drive-save.rule=Host(`images-tonadita.plataformabit.com`)"
+      - "traefik.http.routers.drive-save.rule=Host(`${WEBHOOK_HOST}`)"
       - "traefik.http.routers.drive-save.entrypoints=web"
       - "traefik.http.services.drive-save.loadbalancer.server.port=8000"
 

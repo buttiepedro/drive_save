@@ -12,10 +12,9 @@ _SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
 def _get_service():
-    credentials_path = os.environ["GOOGLE_CREDENTIALS_PATH"]
-    creds = service_account.Credentials.from_service_account_file(
-        credentials_path, scopes=_SCOPES
-    )
+    import json
+    info = json.loads(os.environ["GOOGLE_CREDENTIALS_JSON"])
+    creds = service_account.Credentials.from_service_account_info(info, scopes=_SCOPES)
     return build("drive", "v3", credentials=creds)
 
 

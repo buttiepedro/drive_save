@@ -1,5 +1,6 @@
 import logging
 import os
+from urllib.parse import urlparse
 
 from fastapi import APIRouter, Form, HTTPException, UploadFile
 
@@ -9,8 +10,12 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+_raw_path = os.environ.get("WEBHOOK_PATH", "/webhook/upload")
+_webhook_path = urlparse(_raw_path).path or _raw_path
+logger.info("Webhook registrado en: %s", _webhook_path)
 
-@router.post(os.environ.get("WEBHOOK_PATH", "/webhook/upload"))
+
+@router.post(_webhook_path)
 async def receive_image(
     sender_id: str = Form(...),
     image: UploadFile = Form(...),
